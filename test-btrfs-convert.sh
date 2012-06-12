@@ -6,7 +6,7 @@ image_file="/tmp/test.fs"
 
 populate_with_test_files ()
 {
-	for i in {1..7}
+	for i in {1..6}
 	do
 		size=$((2**$i));
 		dd if=/dev/urandom of=${destination_dir}/file${i} bs=1M count=${size};
@@ -16,6 +16,7 @@ populate_with_test_files ()
 umount $destination_dir
 rm -r $destination_dir
 mkdir $destination_dir
+rm ext4_sums btrfs_sums
 dd if=/dev/zero of=${image_file} bs=1M count=2K
 yes | mkfs.ext4 $image_file
 mount $image_file $destination_dir
@@ -28,7 +29,7 @@ md5sum ${destination_dir}/* > ext4_sums
 umount $destination_dir
 #btrfs-convert $image_file
 echo "Starting btrfs conversion."
-${testing_version_of_btrfs_convert} -l 4K $image_file
+${testing_version_of_btrfs_convert} -l 32K $image_file
 mount $image_file $destination_dir
 md5sum ${destination_dir}/* > btrfs_sums
 
